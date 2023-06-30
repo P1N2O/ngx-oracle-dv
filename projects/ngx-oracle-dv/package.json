@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "name": "ngx-oracle-dv",
+  "description": "Oracle Data Visualization Components for Angular",
+  "keywords": [
+    "angular",
+    "embed",
+    "oracle analytics cloud",
+    "oracle visualization",
+    "data visualization"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/P1N2O/ngx-oracle-dv"
+  },
+  "homepage": "https://github.com/P1N2O/ngx-oracle-dv",
+  "author": {
+    "name": "Manuel Pinto",
+    "email": "manuel@pinto.dev",
+    "url": "https://manuel.pinto.dev"
+  },
+  "bugs": {
+    "url": "https://github.com/P1N2O/ngx-oracle-dv/issues"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "@angular/common": ">=14.2.0",
+    "@angular/core": ">=14.2.0"
+  },
+  "dependencies": {
+    "tslib": ">=2.3.0"
+  }
+}

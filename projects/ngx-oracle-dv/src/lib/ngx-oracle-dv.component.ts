@@ -1,51 +1,15 @@
-import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, Renderer2 } from '@angular/core';
 
 declare const window: any;
 
 @Component({
-  selector: 'ngx-oracle-dv',
-  template: `
-  <div id="odvContainer" style={{style}}>
-
-      <!-- Oracle DV -->
-      <!-- <oracle-dv #oracleDv *ngIf="projectPath else noProjectPath"
-      [project-path]="projectPath"
-      [active-page]="activePage"
-      [active-tab-id]="activeTabId"
-      [filters]="filters"></oracle-dv> -->
-
-      <!-- No Project Path Error -->
-      <!-- <ng-template #noProjectPath> -->
-        <div *ngIf="!projectPath" role="alert">
-          <h4>No project path!</h4>
-          <p>Please specify the project path.</p>
-        </div>
-      <!-- </ng-template> -->
-
-    </div>
-  `,
-  styles: [
-  ]
+  selector: 'ngx-oracle-dv[project-path], oracle-dv[project-path]',
+  template: `<div id="ngxOracleDv" style={{style}}></div>`,
+  styles: []
 })
-export class NgxOracleDvComponent implements AfterViewInit {
-  // Knockout
-  knockout = window.requirejs(
-    [
-      'knockout',
-      'ojs/ojcore',
-      'ojs/ojknockout',
-      'ojs/ojcomposite',
-      'jet-composites/oracle-dv/loader',
-    ],
-    function (ko: any) {
-      ko.applyBindings();
-    }
-  );
-
-  @ViewChild('oracleDv', {static:true}) oracleDv: any;
-
+export class NgxOracleDvComponent implements OnInit, AfterViewInit {
   /**
-   * Container stlyes
+   * Container styles
    * 
    * Default value:
    * {
@@ -60,25 +24,25 @@ export class NgxOracleDvComponent implements AfterViewInit {
   /**
   * (Required) Specifies the repository path of the workbook that you want to render.
   */
-  @Input() projectPath!:string;
+  @Input('project-path') projectPath!: string;
   /**
    * (Optional) Specifies whether a canvas or insight other than the default is rendered. When you specify active-page, you also use active-tab-id to specify the exact canvas or story page that you’re showing. Valid values are canvas and insight.
    * 
    * Default value: 'canvas'
    */
-  @Input() activePage = 'canvas';
+  @Input('active-page') activePage = 'canvas';
   /**
    * (Optional) Specifies the ID of the canvas or the story page that you’re showing.
    * 
    * Default value: '1'
    */
-  @Input() activeTabId = '1';
+  @Input('active-tab-id') activeTabId = '1';
   /**
    * (Optional) Allows the programmatic passing of filter values to an embedded workbook.
    * 
    * Default value: []
    */
-  @Input() filters: Array<Record<any,any>> = [];
+  @Input('filters') filters: Array<Record<any,any>> = [];
 
   /*
   * (Optional) Project options
@@ -89,29 +53,47 @@ export class NgxOracleDvComponent implements AfterViewInit {
   * bShowFilterBar: true
   * }
   */
-  @Input() projectOptions =
+  @Input('project-options') projectOptions =
     {
       bDisableMobileLayout: false,
       bShowFilterBar: true
     };
 
-  constructor() {
-      // Call this.knockout when input is received from parent component to projectPath
+  constructor(private renderer: Renderer2) {}
+
+  ngOnInit() {
+    // Init Knockout if projectPath is defined
     if (this.projectPath) {
-      this.knockout;
+    this.initKnockout();
     }
   }
 
   ngAfterViewInit() {
-    // Generate Oracle DV element
-    const oracleDv = document.createElement('oracle-dv');
-    oracleDv.setAttribute('project-path', this.projectPath);
-    oracleDv.setAttribute('active-page', this.activePage);
-    oracleDv.setAttribute('active-tab-id', this.activeTabId);
-    oracleDv.setAttribute('filters', JSON.stringify(this.filters));
-    oracleDv.setAttribute('project-options', JSON.stringify(this.projectOptions));
+    // Generate Oracle Data Visualization
+    const elem = document.createElement('oracle-dv');
+    elem.setAttribute('project-path', this.projectPath);
+    elem.setAttribute('active-page', this.activePage);
+    elem.setAttribute('active-tab-id', this.activeTabId);
+    elem.setAttribute('filters', JSON.stringify(this.filters));
+    elem.setAttribute('project-options', JSON.stringify(this.projectOptions));
 
-    document.getElementById('odvContainer')?.appendChild(oracleDv);
+    document.getElementById('ngxOracleDv')?.appendChild(elem);
+  }
+
+  // Initialize Knockout
+  initKnockout() {
+    window.requirejs(
+      [
+        'knockout',
+        'ojs/ojcore',
+        'ojs/ojknockout',
+        'ojs/ojcomposite',
+        'jet-composites/oracle-dv/loader',
+      ],
+      function (ko: any) {
+        ko.applyBindings();
+      }
+    )
   }
 
 }
